@@ -1,0 +1,64 @@
+@media print {
+	
+	* {
+		background: transparent;
+		color: black;
+		box-shadow: none;
+		text-shadow: none;
+		filter: none;
+		-ms-filter: none;
+	}
+	
+	@page {
+		margin: 0.5in;
+	}
+	
+	table {
+		font-weight: bold;
+		box-shadow: none;
+		-moz-box-shadow: none;
+		-webkit-box-shadow: none;
+	}
+	
+	table,
+	thead tr td,
+	thead tr th,
+	tbody td,
+	tbody tr:first-child td,
+	tfoot tr td,
+	tfoot tr th {
+		border: none;
+	}
+	
+	thead {
+		display: table-header-group;
+	}
+	
+	thead th {
+		text-shadow: none;
+	}
+	
+	.print-solid {
+		border-bottom: 1px solid #000;
+	}
+	
+	.print-dotted {
+		border-bottom: 1px dotted #000;
+	}
+	
+	.print-dashed {
+		border-top: 1px dashed #000;
+		border-bottom: 1px dashed #000;
+	}
+	
+	tr {
+		page-break-inside: avoid;
+	}
+	
+	p.footer,
+	.toolbar {
+		display: none;
+		visibility: hidden;
+	}
+	
+}
