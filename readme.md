@@ -9,18 +9,19 @@ is still under warranty.
 ### For Employees
 
 * List of repairs
-	* Full list
-	* Currently on-location
-	* User warranty
-	* Expired warranty
+	* 50 per page
 * Date dropped off
 * Date console was repaired
-* Date console was tested (x2)
-* Date customer was called (x3)
+* Date console was tested
+* Date customer was called
+* Date customer called with inquiries
 * Date console was picked up
-* Date warranty expires (automatically set to 30 after pickup)
+* Date warranty expires
+* Game stuck in system? (what game?)
 * Warranty number (our warranty stickers have a number)
-* Aditional info (customer can see this if they log into the system; we used it if we couldn't get ahold of them)
+* Tech notes (info about what needs to be done to fix whatever is wrong)
+* Call notes (what was the customer told?)
+* Aditional info (customer can see this if they log into the system)
 
 ### For Customers
 
@@ -35,4 +36,4 @@ is still under warranty.
 	* Date dropped off
 	* Date repaired / called / picked up
 	* Expiration date
-	* Aditional notes / status (usually telling them we couldn't get in contact with them or replacement serial numbers if we replaced their system with one that works)
+	* Aditional notes / status (usually replacement serial numbers if we replaced their system)

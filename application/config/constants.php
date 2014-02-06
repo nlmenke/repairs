@@ -32,5 +32,17 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
+/*
+| ------------------------------------------------------------------------
+| CODE VERSION
+| ------------------------------------------------------------------------
+| This is the version of the application you're running.
+*/
+
+define('APP_MAJOR_VER',	'2');
+define('APP_MINOR_VER',	'2');
+define('APP_PATCH_VER',	'1');
+define('APP_STATUS',	''); // 'dev', 'alpha', or 'beta'
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

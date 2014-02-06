@@ -6,7 +6,7 @@
 | 				nick.m@gamersorlando.com
 | 				@NLMenke
 | Location:		https://github.com/nlmenke/repairs/
-| Created:		08/26/2012
+| Created:		04/01/2013
 | Description:	Gathers information from database about the company and
 | 				application.
 */
@@ -35,7 +35,6 @@ class Appconfig extends CI_Model {
 		}
 		
 		return '';
-		
 	}
 	
 	function save($key, $value) {

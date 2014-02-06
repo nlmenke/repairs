@@ -18,11 +18,20 @@ class Repair_model extends CI_Model {
 	
 	function get_all() {
 		$this->db->order_by('pick_up_date', 'ASC');
-		$this->db->order_by('called_3_date', 'ASC');
-		$this->db->order_by('called_2_date', 'ASC');
-		$this->db->order_by('called_1_date', 'ASC');
-		$this->db->order_by('test_2_date', 'ASC');
-		$this->db->order_by('test_1_date', 'ASC');
+		$this->db->order_by('last_called_date', 'ASC');
+		$this->db->order_by('last_test_date', 'ASC');
+		$this->db->order_by('repair_date', 'ASC');
+		$this->db->order_by('drop_off_date', 'ASC');
+		
+		$query = $this->db->get('repairs');
+		return $query->result();
+	}
+	
+	function get_archives($num, $offset) {
+		$this->db->limit($num, ($offset-1)*$num);
+		$this->db->order_by('pick_up_date', 'ASC');
+		$this->db->order_by('last_called_date', 'ASC');
+		$this->db->order_by('last_test_date', 'ASC');
 		$this->db->order_by('repair_date', 'ASC');
 		$this->db->order_by('drop_off_date', 'ASC');
 		
@@ -32,11 +41,8 @@ class Repair_model extends CI_Model {
 	
 	function get_in_house() {
 		$this->db->where('pick_up_date', NULL);
-		$this->db->order_by('called_3_date', 'ASC');
-		$this->db->order_by('called_2_date', 'ASC');
-		$this->db->order_by('called_1_date', 'ASC');
-		$this->db->order_by('test_2_date', 'ASC');
-		$this->db->order_by('test_1_date', 'ASC');
+		$this->db->order_by('last_called_date', 'ASC');
+		$this->db->order_by('last_test_date', 'ASC');
 		$this->db->order_by('repair_date', 'ASC');
 		$this->db->order_by('drop_off_date', 'ASC');
 		
@@ -44,48 +50,17 @@ class Repair_model extends CI_Model {
 		return $query->result();
 	}
 	
-	function get_under_warranty() {
-		$this->db->where('expire >', date('Y-m-d'));
-		$this->db->order_by('pick_up_date', 'ASC');
-		$this->db->order_by('called_3_date', 'ASC');
-		$this->db->order_by('called_2_date', 'ASC');
-		$this->db->order_by('called_1_date', 'ASC');
-		$this->db->order_by('test_2_date', 'ASC');
-		$this->db->order_by('test_1_date', 'ASC');
-		$this->db->order_by('repair_date', 'ASC');
-		$this->db->order_by('drop_off_date', 'ASC');
+	function get_type($type) {
+		$this->db->where($type, 1);
 		
 		$query = $this->db->get('repairs');
 		return $query->result();
 	}
 	
-	function get_expired() {
-		$this->db->where('expire <', date('Y-m-d'));
-		$this->db->order_by('pick_up_date', 'ASC');
-		$this->db->order_by('called_3_date', 'ASC');
-		$this->db->order_by('called_2_date', 'ASC');
-		$this->db->order_by('called_1_date', 'ASC');
-		$this->db->order_by('test_2_date', 'ASC');
-		$this->db->order_by('test_1_date', 'ASC');
-		$this->db->order_by('repair_date', 'ASC');
-		$this->db->order_by('drop_off_date', 'ASC');
-		
-		$query = $this->db->get('repairs');
-		return $query->result();
-	}
-	
-	function get_refix_count() {
-		$this->db->where('refix', 1);
-		
-		$query = $this->db->get('repairs');
-		return count($query->result());
-	}
-	
-	function get_unrepairable_count() {
-		$this->db->where('cnbf', 1);
-		
-		$query = $this->db->get('repairs');
-		return count($query->result());
+	function get_info($ticket_id) {
+		$this->db->from('repairs');
+		$this->db->where('ticket_id', $ticket_id);
+		return $this->db->get();
 	}
 	
 	function get_item($ticket_id) {
@@ -112,11 +87,8 @@ class Repair_model extends CI_Model {
 	function get_customer_info($customer) {
 		$this->db->where('customer_name', $customer);
 		$this->db->order_by('pick_up_date', 'ASC');
-		$this->db->order_by('called_3_date', 'ASC');
-		$this->db->order_by('called_2_date', 'ASC');
-		$this->db->order_by('called_1_date', 'ASC');
-		$this->db->order_by('test_2_date', 'ASC');
-		$this->db->order_by('test_1_date', 'ASC');
+		$this->db->order_by('last_called_date', 'ASC');
+		$this->db->order_by('last_test_date', 'ASC');
 		$this->db->order_by('repair_date', 'ASC');
 		$this->db->order_by('drop_off_date', 'ASC');
 		
@@ -128,11 +100,8 @@ class Repair_model extends CI_Model {
 		$this->db->where('email_address', $customer_email);
 		$this->db->where('repair_type', $repair_type);
 		$this->db->order_by('pick_up_date', 'ASC');
-		$this->db->order_by('called_3_date', 'ASC');
-		$this->db->order_by('called_2_date', 'ASC');
-		$this->db->order_by('called_1_date', 'ASC');
-		$this->db->order_by('test_2_date', 'ASC');
-		$this->db->order_by('test_1_date', 'ASC');
+		$this->db->order_by('last_called_date', 'ASC');
+		$this->db->order_by('last_test_date', 'ASC');
 		$this->db->order_by('repair_date', 'ASC');
 		$this->db->order_by('drop_off_date', 'ASC');
 		
@@ -170,6 +139,53 @@ class Repair_model extends CI_Model {
 		$this->db->select_max('ticket_id');
 		$query = $this->db->get('repairs');
 		return $query->row()->ticket_id;
+	}
+	
+	/*
+	 * Performs search.
+	 */
+	function search($search, $limit = 50, $offset) {
+		$search_terms_array = explode(' ', $this->db->escape_like_str($search));
+		
+		// to keep track of which search term of the array we're looking at now
+		$search_name_criteria_counter = 0;
+		$sql_search_name_criteria = '';
+		// loop through array of search terms
+		foreach($search_terms_array as $x) {
+			$sql_search_name_criteria .= ($search_name_criteria_counter > 0 ? ' AND ' : '').'customer_first LIKE "%'.$this->db->escape_like_str($x).'%"';
+			
+			$search_name_criteria_counter++;
+		}
+		
+		$this->db->where('(('.$sql_search_name_criteria.') or
+		customer_last LIKE "%'.$this->db->escape_like_str($search).'%" or
+		phone_number LIKE "%'.$this->db->escape_like_str($search).'%" or
+		serial_number LIKE "%'.$this->db->escape_like_str($search).'%" or
+		new_serial LIKE "%'.$this->db->escape_like_str($search).'%" or
+		item LIKE "%'.$this->db->escape_like_str($search).'%" or
+		problem LIKE "%'.$this->db->escape_like_str($search).'%")');
+		$this->db->order_by('pick_up_date', 'ASC');
+		$this->db->order_by('last_called_date', 'ASC');
+		$this->db->order_by('last_test_date', 'ASC');
+		$this->db->order_by('repair_date', 'ASC');
+		$this->db->order_by('drop_off_date', 'ASC');
+		$this->db->limit($limit, ($offset-1)*$limit);
+		
+		$query = $this->db->get('repairs');
+		return $query->result();
+	}
+	
+	function search_count($search) {
+		$this->db->where('(customer_first LIKE "%'.$this->db->escape_like_str($search).'%" or
+		customer_last LIKE "%'.$this->db->escape_like_str($search).'%" or
+		phone_number LIKE "%'.$this->db->escape_like_str($search).'%" or
+		serial_number LIKE "%'.$this->db->escape_like_str($search).'%" or
+		new_serial LIKE "%'.$this->db->escape_like_str($search).'%" or
+		item LIKE "%'.$this->db->escape_like_str($search).'%" or
+		problem LIKE "%'.$this->db->escape_like_str($search).'%")');
+		
+		$result = $this->db->get('repairs');
+		return $result->num_rows();
 	}
 }
 

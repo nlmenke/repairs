@@ -20,123 +20,137 @@ class Ion_auth_mongodb_model extends CI_Model {
 	/**
 	 * Holds the name of MongoDB collections
 	 *
-	 * @var array
+	 * @var	array
 	 */
 	public $collections = array();
 	
 	/**
 	 * activation code
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $activation_code;
 	
 	/**
 	 * forgotten password key
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $forgotten_password_code;
 	
 	/**
 	 * new password
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $new_password;
 	
 	/**
 	 * Identity
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $identity;
 	
 	/**
 	 * Where
 	 *
-	 * @var array
+	 * @var	array
 	 */
 	public $_ion_where = array();
 	
 	/**
 	 * Select
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $_ion_select = array();
 	
 	/**
 	 * Limit
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $_ion_limit = NULL;
 	
 	/**
 	 * Offset
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $_ion_offset = NULL;
 	
 	/**
 	 * Order By
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $_ion_order_by = NULL;
 	
 	/**
 	 * Order
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	public $_ion_order = NULL;
 	
 	/**
 	 * Hooks
 	 *
-	 * @var object
+	 * @var	object
 	 */
 	protected $_ion_hooks;
 	
 	/**
 	 * Response
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	protected $response = NULL;
 	
 	/**
 	 * message (uses lang file)
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	protected $messages;
 	
 	/**
 	 * error message (uses lang file)
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	protected $errors;
 	
 	/**
 	 * error start delimiter
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	protected $error_start_delimiter;
 	
 	/**
 	 * error end delimiter
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	protected $error_end_delimiter;
 	
-	// ------------------------------------------------------------------------
+	/**
+	 * caching of users and their groups
+	 *
+	 * @var	array
+	 */
+	public $_cache_user_in_group = array();
+	
+	/**
+	 * caching of groups
+	 *
+	 * @var	array
+	 */
+	protected $_cache_groups = array();
+	
+	// -------------------------------------------------------------------
 	
 	/**
 	 * IonAuth MongoDB Model Constructor
@@ -147,7 +161,14 @@ class Ion_auth_mongodb_model extends CI_Model {
 		$this->load->config('ion_auth', TRUE);
 		$this->load->helper('cookie');
 		$this->load->helper('date');
-		$this->load->library('session');
+		
+		// Load the session, CI2 as a library, CI3 uses it as a driver
+		if(substr(CI_VERSION, 0, 1) == '2') {
+			$this->load->library('session');
+		} else {
+			$this->load->driver('session');
+		}
+		
 		$this->lang->load('ion_auth');
 		
 		// Initialize MongoDB collection names
@@ -184,13 +205,13 @@ class Ion_auth_mongodb_model extends CI_Model {
 			} else {
 				$rounds = array('rounds' => $this->default_rounds);
 			}
-			$this->load->library('bcrypt',$rounds);
+			$this->load->library('bcrypt', $rounds);
 		}
 		
 		$this->trigger_events('model_constructor');
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Hashes the password to be stored in the database.
@@ -204,7 +225,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		if($use_sha1_override === FALSE && $this->hash_method == 'bcrypt') {
 			return $this->bcrypt->hash($password);
 		}
-		
+
 		if($this->store_salt && $salt) {
 			return sha1($password.$salt);
 		} else {
@@ -213,10 +234,11 @@ class Ion_auth_mongodb_model extends CI_Model {
 		}
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
-	 * Takes a password and validates it against an entry in the collection.
+	 * Takes a password and validates it against an entry in the
+	 * collection.
 	 */
 	public function hash_password_db($id, $password, $use_sha1_override = FALSE) {
 		if(empty($id) || empty($password)) {
@@ -255,10 +277,11 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return ($db_password == $hash_password_db->password);
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
-	 * Generates a random salt value for forgotten passwords or any other keys. Uses SHA1.
+	 * Generates a random salt value for forgotten passwords or any other
+	 * keys. Uses SHA1.
 	 */
 	public function hash_code($password) {
 		return $this->hash_password($password, FALSE, TRUE);
@@ -268,10 +291,10 @@ class Ion_auth_mongodb_model extends CI_Model {
 	 * Generates a random salt value.
 	 */
 	public function salt() {
-		return substr(md5(uniqid(rand(), TRUE)), 0, $this->salt_length);
+		return substr(md5(uniqid(rand(), true)), 0, $this->salt_length);
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Validates and removes activation code.
@@ -319,7 +342,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $updated;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Updates a user document with an activation code.
@@ -349,7 +372,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $updated;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Clears forgotten password code from database.
@@ -372,12 +395,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Resets password.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function reset_password($identity, $new) {
 		$this->trigger_events('pre_change_password');
@@ -392,7 +415,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		$docs = $this->mongo_db->select(array('_id', 'password', 'salt'))
 							   ->where($this->identity_column, $identity)
 							   ->limit(1)
-							   ->get($this->collections['users']);
+							  ->get($this->collections['users']);
 		
 		// Unsuccessfull password change
 		if(count($docs) !== 1) {
@@ -418,7 +441,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 								  ))
 								  ->update($this->collections['users']);
 		
-		if($updated)	{
+		if($updated) {
 			$this->trigger_events(array('post_change_password', 'post_change_password_successful'));
 			$this->set_message('password_change_successful');
 		} else {
@@ -429,12 +452,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $updated;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Changes password.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function change_password($identity, $old, $new) {
 		$this->trigger_events('pre_change_password');
@@ -479,12 +502,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Checks username.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function username_check($username = '') {
 		$this->trigger_events('username_check');
@@ -494,17 +517,17 @@ class Ion_auth_mongodb_model extends CI_Model {
 		}
 		
 		$this->trigger_events('extra_where');
-		
+		$username = new MongoRegex('/^'.$username.'$/i');
 		return count($this->mongo_db->where('username', $username)
 									->get($this->collections['users'])) > 0;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Checks email.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function email_check($email = '') {
 		$this->trigger_events('email_check');
@@ -514,17 +537,17 @@ class Ion_auth_mongodb_model extends CI_Model {
 		}
 		
 		$this->trigger_events('extra_where');
-		
+		$email = new MongoRegex('/^'.$email.'$/i');
 		return count($this->mongo_db->where('email', $email)
 									->get($this->collections['users'])) > 0;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Checks identity field.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	protected function identity_check($identity = '') {
 		$this->trigger_events('identity_check');
@@ -537,12 +560,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 									->get($this->collections['users'])) > 0;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Inserts a forgotten password key.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function forgotten_password($identity) {
 		if(empty($identity)) {
@@ -569,12 +592,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $updated;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Completes a forgotten password procedure.
 	 *
-	 * @return string
+	 * @return	string
 	 */
 	public function forgotten_password_complete($code, $salt = FALSE) {
 		$this->trigger_events('pre_forgotten_password_complete');
@@ -611,9 +634,9 @@ class Ion_auth_mongodb_model extends CI_Model {
 			$password = $this->salt();
 			$this->mongo_db->where('forgotten_password_code', $code)
 						   ->set(array(
-							'password' => $this->hash_password($password, $salt),
-							'forgotten_password_code' => NULL,
-							'active' => 1,
+							'password'					=> $this->hash_password($password, $salt),
+							'forgotten_password_code'	=> NULL,
+							'active'					=> 1,
 						   ))
 						   ->update($this->collections['users']);
 			
@@ -635,12 +658,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Inserts a user document into users collection.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function register($username, $password, $email, $additional_data = array(), $groups = array()) {
 		$this->trigger_events('pre_register');
@@ -661,7 +684,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 			$original_username = $username;
 			for($i = 0; $this->username_check($username); $i++) {
 				if($i > 0) {
-					$username = $original_username.$i;
+					$username = $original_username . $i;
 				}
 			}
 		}
@@ -717,12 +740,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return isset($id) ? $id : FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Checks credentials and logs the passed user in if possible.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function login($identity, $password, $remember = FALSE) {
 		$this->trigger_events('pre_login');
@@ -793,12 +816,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Checks whether the maximum login attempts limit is reached.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function is_max_login_attempts_exceeded($identity) {
 		// Do we set to track login attempts?
@@ -813,12 +836,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Returns the number of attempts to login occured from given IP or identity
 	 *
-	 * @return int
+	 * @return	int
 	 */
 	function get_attempts_num($identity) {
 		// Do we set to track login attempts?
@@ -835,7 +858,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return 0;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Increses login attempts of the passed user
@@ -852,7 +875,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Clears login attempts of the passed identity.
@@ -861,17 +884,17 @@ class Ion_auth_mongodb_model extends CI_Model {
 		// Do we set to track login attempts?
 		if($this->config->item('track_login_attempts', 'ion_auth')) {
 			return $this->mongo_db->where(array(
-									'login' => $identity,
-									'ip_address' => $this->_prepare_ip($this->input->ip_address())
-								  ))
-								  // Purge obsolete login attempts
-								  ->or_where(array('time <' => time() - $expire_period))
-								  ->delete($this->collections['login_attempts']);
+				'login'			=> $identity,
+				'ip_address'	=> $this->_prepare_ip($this->input->ip_address())
+			))
+			// Purge obsolete login attempts
+			->or_where(array('time <' => time() - $expire_period))
+			->delete($this->collections['login_attempts']);
 		}
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Sets query limit parameter.
@@ -883,7 +906,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Sets query offset parameter.
@@ -895,7 +918,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Sets query where conditions.
@@ -912,7 +935,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Sets query select portion.
@@ -925,7 +948,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Sets query orderby parameter.
@@ -939,14 +962,14 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Returns a single document object from an array of results.
 	 *
 	 * It's our MongoDB equivalent of CodeIgniter row() method.
 	 *
-	 * @return object
+	 * @return	object
 	 */
 	public function document() {
 		$this->trigger_events('document');
@@ -964,14 +987,14 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $document;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Returns a single document object from an array of results.
 	 *
 	 * It's our MongoDB equivalent of CodeIgniter row_array() method.
 	 *
-	 * @return array
+	 * @return	array
 	 */
 	public function document_array() {
 		$this->trigger_events(array('document', 'document_array'));
@@ -989,38 +1012,40 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $document;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Alias function for document() to maintain API consistency.
 	 *
-	 * @return object
+	 * @return	object
 	 */
 	public function row() {
 		return $this->document();
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
-	 * Helper: Alias function for document_array() to maintain API consistency.
+	 * Helper: Alias function for document_array() to maintain API
+	 * consistency.
 	 *
-	 * @return object
+	 * @return	object
 	 */
 	public function row_array() {
 		return $this->document_array();
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Returns query results as an array of objects.
 	 *
 	 * This helper, and a few others (result_array, row, row_array) are
-	 * implemented to mimic the behavior of their equivalent functions in the
-	 * original model, but in MongoDB interface environment.
+	 * implemented to mimic the behavior of their equivalent functions in
+	 * the original model, but in MongoDB interface environment.
 	 *
-	 * TODO: These kinda helpers should exist in MongoDB Active Record Library.
+	 * TODO: These kinda helpers should exist in MongoDB Active Record
+	 * Library.
 	 */
 	public function result() {
 		$this->trigger_events('result');
@@ -1044,7 +1069,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $result;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Returns query results as an array of arrays.
@@ -1064,12 +1089,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $result;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
-	 * Helper: Builds & executes a MongoDB query based on the already set parameters
-	 * against users collection.
-	 *
+	 * Helper: Builds & executes a MongoDB query based on the already set
+	 * parameters against users collection.
+	 * 
 	 * @return object
 	 */
 	public function users($groups = NULL) {
@@ -1090,7 +1115,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 				$groups = array($groups);
 			}
 			
-			if( ! empty($groups)) {
+			if(!empty($groups)) {
 				$this->mongo_db->where_in('groups', $groups);
 			}
 		}
@@ -1130,12 +1155,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Returns user object by its passed ID.
 	 *
-	 * @return object
+	 * @return	object
 	 */
 	public function user($id = FALSE) {
 		$this->trigger_events('user');
@@ -1153,12 +1178,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Returns an array of the user groups.
 	 *
-	 * @return array
+	 * @return	array
 	 */
 	public function get_users_groups($id = FALSE) {
 		$this->trigger_events('get_users_group');
@@ -1188,7 +1213,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Adds group ID to the specified user document.
@@ -1206,7 +1231,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 							  ->update($this->collections['users']);
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Removes passed group from the user document.
@@ -1214,7 +1239,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 	 * If the group ID is not set, it will remove all groups
 	 * from the user document.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function remove_from_group($group_name = FALSE, $user_id = FALSE) {
 		$this->trigger_events('remove_from_group');
@@ -1234,12 +1259,13 @@ class Ion_auth_mongodb_model extends CI_Model {
 		}
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
-	 * Helper: Builds and executes a MongoDB query against groups collection.
+	 * Helper: Builds and executes a MongoDB query against groups
+	 * collection.
 	 *
-	 * @return object
+	 * @return	object
 	 */
 	public function groups() {
 		$this->trigger_events('groups');
@@ -1274,12 +1300,13 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
-	 * Helper: Returns a group object based on pre-defined buffered parameters.
+	 * Helper: Returns a group object based on pre-defined buffered
+	 * parameters.
 	 *
-	 * @return object
+	 * @return	object
 	 */
 	public function group($id = NULL) {
 		$this->trigger_events('group');
@@ -1295,12 +1322,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $this->groups();
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Updates a user document.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function update($id, array $data) {
 		$this->trigger_events('pre_update_user');
@@ -1311,7 +1338,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		// If we're updating user document with a new identity
 		// and the identity is not available to register, bam!
 		if(array_key_exists($this->identity_column, $data) && $this->identity_check($data[$this->identity_column]) && $user->{$this->identity_column} !== $data[$this->identity_column]) {
-			$this->set_error('account_creation_duplicate_' . $this->identity_column);
+			$this->set_error('account_creation_duplicate_'.$this->identity_column);
 			$this->trigger_events(array('post_update_user', 'post_update_user_unsuccessful'));
 			$this->set_error('update_unsuccessful');
 			
@@ -1323,7 +1350,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		
 		// Hash new password
 		if(array_key_exists('password', $data)) {
-			if( ! empty($data['password'])) {
+			if(!empty($data['password'])) {
 				$data['password'] = $this->hash_password($data['password'], $user->salt);
 			} else {
 				// unset password so it doesn't effect database entry if password field empty
@@ -1363,12 +1390,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return TRUE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Deletes a user document by its ID.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function delete_user($id) {
 		$this->trigger_events('pre_delete_user');
@@ -1388,12 +1415,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return TRUE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Updates user last login timestamp.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function update_last_login($id) {
 		$this->load->helper('date');
@@ -1406,12 +1433,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 							  ->update($this->collections['users']);
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Sets language cookie.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function set_lang($lang = 'en') {
 		$this->trigger_events('set_lang');
@@ -1432,12 +1459,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return TRUE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Remembers user by setting required cookies
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function remember_user($id) {
 		$this->trigger_events('pre_remember_user');
@@ -1485,12 +1512,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Logs in a remembered user.
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function login_remembered_user() {
 		$this->trigger_events('pre_login_remembered_user');
@@ -1518,8 +1545,8 @@ class Ion_auth_mongodb_model extends CI_Model {
 			
 			// And set user session data
 			$this->session->set_userdata(array(
-				$this->identity_column	=> $user->{$this->identity_column},
-				'user_id'				=> $user->_id,
+				$this->identity_column => $user->{$this->identity_column},
+				'user_id'			  => $user->_id,
 			));
 			
 			// Extend the users cookies if the option is enabled
@@ -1536,7 +1563,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Registers a hook.
@@ -1549,7 +1576,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		);
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Unregisters a hook.
@@ -1560,7 +1587,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		}
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Unregisters all hooks from the passed event.
@@ -1571,7 +1598,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		}
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Calls a registered hook callback.
@@ -1585,7 +1612,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 *
@@ -1605,12 +1632,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		}
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Sets the message delimiters
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function set_message_delimiters($start_delimiter, $end_delimiter) {
 		$this->message_start_delimiter = $start_delimiter;
@@ -1618,12 +1645,12 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return TRUE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Sets the error delimiters
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function set_error_delimiters($start_delimiter, $end_delimiter) {
 		$this->error_start_delimiter = $start_delimiter;
@@ -1631,7 +1658,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return TRUE;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Sets a message
@@ -1641,7 +1668,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $message;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Applies delimiters and returns themed messages
@@ -1656,7 +1683,25 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $_output;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
+	
+	/**
+	 * Return messages as an array, langified or not
+	 **/
+	public function messages_array($langify = TRUE) {
+		if($langify) {
+			$_output = array();
+			foreach($this->messages as $message) {
+				$messageLang = $this->lang->line($message) ? $this->lang->line($message) : '##'.$message.'##';
+				$_output[] = $this->message_start_delimiter.$messageLang.$this->message_end_delimiter;
+			}
+			return $_output;
+		} else {
+			return $this->messages;
+		}
+	}
+	
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Sets an error message
@@ -1666,7 +1711,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $error;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Applies delimiters and returns themed errors
@@ -1681,26 +1726,46 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $_output;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
-	 * Helper: Filters out any data passed that doesn't have a matching column in $table.
+	 * Return errors as an array, langified or not
+	 **/
+	public function errors_array($langify = TRUE) {
+		if($langify) {
+			$_output = array();
+			foreach($this->errors as $error) {
+				$errorLang = $this->lang->line($error) ? $this->lang->line($error) : '##'.$error.'##';
+				$_output[] = $this->error_start_delimiter.$errorLang.$this->error_end_delimiter;
+			}
+			return $_output;
+		} else {
+			return $this->errors;
+		}
+	}
+	
+	// -------------------------------------------------------------------
+	
+	/**
+	 * Helper: Filters out any data passed that doesn't have a matching
+	 * column in $table.
 	 *
-	 * Since MongoDB is a schemaless database, we define collection fields as an static array,
-	 * why we do so? MongoDB is vulnerable to Null Byte Injection as stated in the below article.
+	 * Since MongoDB is a schemaless database, we define collection fields
+	 * as an static array, why we do so? MongoDB is vulnerable to NULL
+	 * Byte Injection as stated in the below article.
 	 *
-	 * @see http://www.idontplaydarts.com/2011/02/mongodb-null-byte-injection-attacks/
+	 * @see http://www.idontplaydarts.com/2011/02/mongodb-NULL-byte-injection-attacks/
 	 * @return array
 	 */
 	protected function _filter_data($collection, $data) {
 		$filtered_data = $columns = array();
 		// Define field dictionaries
 		$columns = $collection == 'users' ?
-			// Users collection static schema array
-			array('_id', 'ip_address', 'username', 'password', 'salt', 'email', 'activation_code', 'forgotten_password_code', 'forgotten_password_time', 'remember_code', 'created_on', 'last_login', 'active', 'first_name', 'last_name', 'company', 'phone') :
-			// Groups collection static schema array
-			array('_id', 'name', 'description');
-			
+		// Users collection static schema array
+		array('_id', 'ip_address', 'username', 'password', 'salt', 'email', 'activation_code', 'forgotten_password_code', 'forgotten_password_time', 'remember_code', 'created_on', 'last_login', 'active', 'first_name', 'last_name', 'company', 'phone') :
+		// Groups collection static schema array
+		array('_id', 'name', 'description');
+		
 		if(is_array($data)) {
 			foreach($columns as $column) {
 				// Skip unavailable fields
@@ -1713,32 +1778,31 @@ class Ion_auth_mongodb_model extends CI_Model {
 		return $filtered_data;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Prepares IP address string for database insertion.
 	 *
-	 * @return string
+	 * @return	string
 	 */
 	protected function _prepare_ip($ip_address) {
 		return $ip_address;
 	}
 	
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------------
 	
 	/**
 	 * Helper: Clones "_id" field value in a new "id" property.
 	 *
-	 * We need to add an arbitrary "id" field to the resulted
-	 * object to maintain IonAuth compatibility with both
-	 * mongodb library and the native database drivers with
-	 * minimum level of code change.
+	 * We need to add an arbitrary "id" field to the resulted object to
+	 * maintain IonAuth compatibility with both mongodb library and the
+	 * native database drivers with minimum level of code change.
 	 *
 	 * This helper only clones the _id field value, if:
 	 * 1. _id field is already present in the array.
 	 * 2. id field is not set already set with any other values.
 	 *
-	 * @param mixed $result Result array or object
+	 * @param  mixed $result Result array or object
 	 * @return mixed
 	 */
 	public function _clone_mongoid($result) {
@@ -1755,8 +1819,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		
 		return is_object($result) ? (object) $data : $data;
 	}
-} // END Ion_auth_mongodb_model Class
-
+}
 
 /* End of file ion_auth_mongodb_model.php */
 /* Location: ./application/modules/auth/models/ion_auth_mongodb_model.php */

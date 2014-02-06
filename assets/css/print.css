@@ -1,64 +1,48 @@
-@media print {
-	
-	* {
-		background: transparent;
-		color: black;
-		box-shadow: none;
-		text-shadow: none;
-		filter: none;
-		-ms-filter: none;
-	}
-	
-	@page {
-		margin: 0.5in;
-	}
-	
-	table {
-		font-weight: bold;
-		box-shadow: none;
-		-moz-box-shadow: none;
-		-webkit-box-shadow: none;
-	}
-	
-	table,
-	thead tr td,
-	thead tr th,
-	tbody td,
-	tbody tr:first-child td,
-	tfoot tr td,
-	tfoot tr th {
-		border: none;
-	}
-	
-	thead {
-		display: table-header-group;
-	}
-	
-	thead th {
-		text-shadow: none;
-	}
-	
-	.print-solid {
-		border-bottom: 1px solid #000;
-	}
-	
-	.print-dotted {
-		border-bottom: 1px dotted #000;
-	}
-	
-	.print-dashed {
-		border-top: 1px dashed #000;
-		border-bottom: 1px dashed #000;
-	}
-	
-	tr {
-		page-break-inside: avoid;
-	}
-	
-	p.footer,
-	.toolbar {
-		display: none;
-		visibility: hidden;
-	}
-	
+body {
+	background-color: #FFFFFF;
+	color: #000000;
+	font-size: 75%;
+	width: 100%;
+}
+
+thead th {
+	text-shadow: none;
+}
+
+.footer,
+.topbar,
+.toolbar {
+	display: none;
+}
+
+#receipt_wrapper {
+	font-family: monospace;
+	font-weight: bold;
+	padding: 0 10px;
+	width: 95%;
+}
+
+#content_area {
+	padding: 0 10px;
+	width: 90%;
+}
+
+#content_area_wrapper {
+	background: none;
+	width: 100%;
+	border: 0;
+	padding: 0;
+}
+
+#repair_contract {
+	width: 100%;
+	text-align: justify;
+}
+
+#return_policy div,
+#ticket_info,
+#receipt_items,
+#receipt_footer,
+div.signature {
+	border-color: #000000;
 }

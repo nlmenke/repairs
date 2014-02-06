@@ -21,9 +21,9 @@ if(!function_exists('format_phone')) {
 			if(strlen($phone) == 7) {
 				$phones[] = preg_replace('/([0-9*]{3})([0-9*]{4})/', '$1-$2', $phone);
 			} elseif(strlen($phone) == 10) {
-				$phones[] = preg_replace('/([0-9*]{3})([0-9*]{3})([0-9*]{4})/', '($1) $2-$3', $phone);
+				$phones[] = preg_replace('/([0-9*]{3})([0-9*]{3})([0-9*]{4})/', '$1-$2-$3', $phone);
 			} elseif(strlen($phone) == 11) {
-				$phones[] = preg_replace('/([0-9*]{1})([0-9*]{3})([0-9*]{3})([0-9*]{4})/', '$1 ($2) $3-$4', $phone);
+				$phones[] = preg_replace('/([0-9*]{1})([0-9*]{3})([0-9*]{3})([0-9*]{4})/', '$1 $2-$3-$4', $phone);
 			} else {
 				$phones[] = $phone;
 			}
@@ -43,11 +43,10 @@ if(!function_exists('strip_phone')) {
 			
 			$phones[] = $phone;
 		}
-		$numbers = implode(' / ', $phones);
+		$numbers = implode('/', $phones);
 		return $numbers;
 	}
 }
-
 
 /* End of file phone_helper.php */
 /* Location: ./application/helpers/phone_helper.php */

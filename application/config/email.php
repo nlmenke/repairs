@@ -3,8 +3,8 @@
 | ------------------------------------------------------------------------
 | EMAIL
 | ------------------------------------------------------------------------
-| This file lets you define parameters for sending emails. Please see the
-| user guide for info:
+| This file lets you define parameters for sending emails.
+| Please see the user guide for info:
 | 
 | 	http://codeigniter.com/user_guide/libraries/email.html
 */
