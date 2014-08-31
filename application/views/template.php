@@ -1,61 +1,111 @@
 <?php
-$imgUrl = base_url().'assets/images/';
+$css_url = base_url().'assets/styles/';
+$js_url = base_url().'assets/scripts/';
+$img_url = base_url().'assets/images/';
 
 echo doctype('html5')."\n";
 ?>
-<html lang="<?php echo $this->lang->line('common_lang'); ?>">
+
+<html lang="<? echo lang('common_lang'); ?>">
 <head>
-	<?php echo meta('robots', 'none'); ?>
-	<?php echo meta('Content-type', 'text/html;charset='.config_item('charset'), 'equiv'); ?>
-	<base href="<?php echo base_url(); ?>" />
-	<title><?php echo $page_title; ?> | <?php echo config_item('company'); ?></title>
-	<?php echo link_tag(base_url().'favicon.ico', 'shortcut icon', 'image/ico')."\n"; ?>
-	<?php if(isset($form) && $form === TRUE): ?>
-	<?php foreach(get_form_css_files() as $css_file): ?>
-	<?php echo link_tag($css_file['path'].'?'.app_version(), 'stylesheet', 'text/css', '', $css_file['media'])."\n"; ?>
-	<?php endforeach; ?>
-	<script type="text/javascript">
-		var SITE_URL = '<?php echo site_url(); ?>';
-	</script>
-	<?php foreach(get_form_js_files() as $js_file): ?>
-	<?php echo script_tag($js_file['path'].'?'.app_version())."\n"; ?>
-	<?php endforeach; ?>
-	<?php else: ?>
-	<?php foreach(get_css_files() as $css_file): ?>
-	<?php echo link_tag($css_file['path'].'?'.app_version(), 'stylesheet', 'text/css', '', $css_file['media'])."\n"; ?>
-	<?php endforeach; ?>
-	<?php foreach(get_js_files() as $js_file): ?>
-	<?php echo script_tag($js_file['path'].'?'.app_version())."\n"; ?>
-	<?php endforeach; ?>
-	<?php endif; ?>
+    <? echo meta('robots', 'none'); ?>
+    <? echo meta('Content-type', 'text/html;charset='.config_item('charset'), 'equiv'); ?>
+    <? echo meta('viewport', 'width=device-width, initial-scale=1.0'); ?>
+    <base href="<? echo base_url(); ?>" />
+    <title><? echo $page_title.' | '.config_item('company'); ?></title>
+    <? echo link_tag(base_url().'favicon.ico', 'shortcut icon', 'image/ico')."\n"; ?>
+
+    <? foreach(get_css_files() as $css_file) { ?>
+    <? echo link_tag($css_file['path'].'?'.app_version(), 'stylesheet', 'text/css', '', $css_file['media'])."\n"; ?>
+    <? } ?>
+
+    <script type="text/javascript">
+    var SITE_URL = '<? echo site_url(); ?>';
+    </script>
+
+    <? foreach(get_js_files() as $js_file) { ?>
+    <? echo script_tag($js_file['path'].'?'.app_version())."\n"; ?>
+    <? } ?>
 </head>
-<body <?php echo 'id="'.$body_id.'"'; ?>>
-	<div class="topbar">
-		<span style="float:left;">
-			<?php if($this->ion_auth->logged_in()): // user is logged in ?>
-			<?php echo $this->lang->line('common_logged_in_as'); ?> <strong><?php echo $user->first_name.' '.$user->last_name; ?></strong> <small><?php echo anchor('auth/logout', '['.$this->lang->line('auth_logout').']'); ?></small>
-			<?php else: // not logged in ?>
-			<?php echo $this->lang->line('common_not_logged_in'); ?> <small><?php echo anchor('auth/login', '['.$this->lang->line('auth_login').']'); ?></small>
-			<?php endif; ?>
-		</span>
-		<strong><?php echo anchor('', config_item('company').' '.$this->lang->line('repairs_repairs')); ?></strong>
-		<span style="float:right;">
-			<time datetime="<?php echo date('Y-m-d'); ?>"><?php echo date('l, F j, Y'); ?></time>
-		</span>
-	</div>
-	<?php echo $this->load->view($content)."\n"; ?>
-	<div class="footer">
-		<span class="copyright"><?php echo copyright('2012'); ?></span>
-		<span class="version">
-			<?php if($this->ion_auth->is_admin() || $this->ion_auth->in_group('employee')): ?>
-			<span><?php echo sprintf($this->lang->line('common_rendered'), $this->db->total_queries(), $this->db->total_queries() == 1 ? $this->lang->line('common_query') : $this->lang->line('common_queries')); ?>.</span>
-			<?php endif; ?>
-			<?php if($this->ion_auth->is_admin() || $this->ion_auth->in_group('employee')): ?>
-			Version <?php echo app_version('full'); ?> by <?php echo anchor('https://github.com/nlmenke', 'N.L.Menke'); ?>.
-			<?php else: ?>
-			Version <?php echo app_version(); ?>.
-			<?php endif; ?>
-		</span>
-	</div>
+<body>
+    <div id="wrapper">
+
+        <? echo $this->load->view('partial/topbar')."\n" ?>
+
+        <? echo $this->load->view('partial/sidebar')."\n" ?>
+
+        <div id="content" class="clearfix">
+
+            <div class="header">
+                <h1 class="page-title">
+                    <?php
+                    if(isset($page_icon)) echo '<i class="fa fa-'.$page_icon.'"></i> ';
+                    echo $page_title;
+                    ?>
+                </h1>
+            </div>
+            <!-- END HEADER -->
+
+            <div class="breadcrumbs">
+                <i class="fa fa-home"></i> Home
+                <i class="fa fa-caret-right"></i> Repairs
+                <i class="fa fa-caret-right"></i> Archive
+            </div>
+            <!-- END BREADCRUMBS -->
+
+            <div class="wrap clearfix">
+                <? echo $this->load->view($content)."\n"; ?>
+            </div>
+
+        </div>
+        <!-- END CONTENT -->
+
+        <footer class="footer">
+
+            <span class="copyright"><? echo copyright('2012'); ?></span>
+			<span class="version">
+
+				<? if($this->ion_auth->is_admin() || $this->ion_auth->in_group('employee')) { ?>
+
+                <span><? echo sprintf(lang('common_rendered'), $this->db->total_queries(), $this->db->total_queries() == 1 ? lang('common_query') : lang('common_queries')); ?>.</span>
+
+                <? } ?>
+
+                <? if($this->ion_auth->is_admin() || $this->ion_auth->in_group('employee')) { ?>
+
+                Version <? echo app_version('full').' '.lang('common_by').' '.anchor('https://github.com/nlmenke', 'N.L.Menke'); ?>.
+
+                <? } else { ?>
+
+                Version <? echo app_version(); ?>.
+
+                <? } ?>
+
+			</span>
+
+        </footer>
+        <!-- END FOOTER -->
+
+    </div>
+    <!-- END WRAPPER -->
+
+    <? if(isset($message) && $message != '') { ?>
+    <script type="text/javascript">
+    $(window).load(function() {
+        toastr.options = {
+            'positionClass': 'toast-bottom-right',
+            'timeOut': 0
+        };
+        <? $message = array_reverse(explode("\n", $message)); ?>
+
+        <? foreach($message as $msg) { ?>
+        <? if($msg != '') { ?>
+        toastr.error('<? echo str_replace(array('<p>', '</p>'), '', $msg); ?>', 'Authentication');
+        <? } ?>
+        <? } ?>
+
+    });
+    </script>
+    <? } ?>
 </body>
 </html>

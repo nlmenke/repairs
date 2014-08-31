@@ -3,14 +3,18 @@
 ### WIP
 
 * Add time of repair estimate
-* Add daily updates (consoles that have been here for a while)
-	* Who needs to be called
-	* What needs to be fixed asap
-* Fix (or remove entirely) warranty type dropdown
-* Fix repair date autofilling (fills with 12/31/1969 on it's own)
-* Change design
+* Fix repair date auto-filling (fills with 12/31/1969 on it's own)
 
-### 2.2.0 (December 30, 2013
+### 3.0.0 (WIP)
+
+* Added messages page
+	* To be called list
+	* To be fixed list
+* Added settings page
+* Moved warranty type to settings
+* Changed design
+
+### 2.2.0 (December 30, 2013)
 
 * Added replacement checkbox and input for new serial number
 * Added failed testing checkbox (resets repair and testing dates)
@@ -25,7 +29,7 @@
 * Added input for tech and call notes
 * Removed requirement of email address
 
-### 2.0.0 (September 13, 2013
+### 2.0.0 (September 13, 2013)
 
 * Added pagination for quicker list loading
 * Changed edit and ticket links to buttons

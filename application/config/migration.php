@@ -1,17 +1,17 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 /*
 | ------------------------------------------------------------------------
-| ENABLE/DISABLE MIGRATIONS
+|  ENABLE/DISABLE MIGRATIONS
 | ------------------------------------------------------------------------
 | Migrations are disabled by default but should be enabled whenever you
 | intend to do a schema migration.
 */
 
-$config['migration_enabled'] = FALSE;
+$config['migration_enabled'] = false;
 
 /*
 | ------------------------------------------------------------------------
-| MIGRATIONS VERSION
+|  MIGRATIONS VERSION
 | ------------------------------------------------------------------------
 | This is used to set migration version that the file system should be on.
 | If you run $this->migration->latest() this is the version that schema
@@ -22,7 +22,7 @@ $config['migration_version'] = 0;
 
 /*
 | ------------------------------------------------------------------------
-| Migrations Path
+|  MIGRATIONS PATH
 | ------------------------------------------------------------------------
 | Path to your migrations folder. Typically, it will be within your
 | application path. Also, writing permission is required within the

@@ -1,6 +1,7 @@
 <html>
 <body>
-	<h1>Activate account for <?php echo $identity;?></h1>
-	<p>Please click this link to <?php echo anchor('auth/activate/'. $id .'/'. $activation, 'Activate Your Account');?>.</p>
+    <h1><? echo sprintf(lang('email_activate_heading'), $identity); ?></h1>
+
+    <p><? echo sprintf(lang('email_activate_subheading'), anchor('auth/activate/'.$id.'/'.$activation, lang('email_activate_link'))); ?></p>
 </body>
 </html>
