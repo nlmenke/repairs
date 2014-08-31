@@ -1,0 +1,8 @@
+body{background-color:#FFF;color:#000;font-size:75%;width:100%}
+thead th{text-shadow:none}
+.footer,.topbar,.toolbar{display:none}
+#receipt_wrapper{font-family:monospace;font-weight:700;padding:0 10px;width:95%}
+#content_area{padding:0 10px;width:90%}
+#content_area_wrapper{background:0 0;width:100%;border:0;padding:0}
+#repair_contract{width:100%;text-align:justify}
+#return_policy div,#ticket_info,#receipt_items,#receipt_footer,div.signature{border-color:#000}
