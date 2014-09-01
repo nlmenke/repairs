@@ -35,7 +35,7 @@
 */
 
 $route['default_controller'] = 'repairs';
-$route['404_override']       = 'error_404';
+$route['404_override']       = 'errors/error_404';
 
 $route['messages/(:any)'] = 'messages/view/$1';
 

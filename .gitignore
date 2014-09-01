@@ -5,7 +5,7 @@
 system/*
 .gitattributes
 .gitignore
-.htaccess
+*.htaccess
 favicon.ico
 *index.html
 index.php
