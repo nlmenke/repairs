@@ -1,5 +1,11 @@
-*/config/development
-*/logs/log-*.php
-*/logs/!index.html
 */cache/*
-*/cache/!index.html
+*/config/*
+*/logs/*
+.idea/*
+system/*
+.gitattributes
+.gitignore
+.htaccess
+favicon.ico
+*index.html
+index.php

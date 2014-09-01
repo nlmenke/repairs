@@ -1,7 +1,7 @@
 <?php if(!defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | ------------------------------------------------------------------------
-| FILE AND DIRECTORY MODES
+|  FILE AND DIRECTORY MODES
 | ------------------------------------------------------------------------
 | These prefs are used when checking and setting modes when working with
 | the file system. The defaults are fine on servers with proper security,
@@ -11,38 +11,51 @@
 | the mode correctly.
 */
 
-define('FILE_READ_MODE',	0644);
-define('FILE_WRITE_MODE',	0666);
-define('DIR_READ_MODE',		0755);
-define('DIR_WRITE_MODE',	0777);
+define('FILE_READ_MODE',  0644);
+define('FILE_WRITE_MODE', 0666);
+define('DIR_READ_MODE',   0755);
+define('DIR_WRITE_MODE',  0777);
 
 /*
 | ------------------------------------------------------------------------
-| FILE STREAM MODES
+|  FILE STREAM MODES
 | ------------------------------------------------------------------------
 | These modes are used when working with fopen()/popen().
 */
 
-define('FOPEN_READ',							'rb');
-define('FOPEN_READ_WRITE',						'r+b');
-define('FOPEN_WRITE_CREATE_DESTRUCTIVE',		'wb'); // truncates existing file data, use with care
-define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE',	'w+b'); // truncates existing file data, use with care
-define('FOPEN_WRITE_CREATE',					'ab');
-define('FOPEN_READ_WRITE_CREATE',				'a+b');
-define('FOPEN_WRITE_CREATE_STRICT',				'xb');
-define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
+define('FOPEN_READ',                          'rb');
+define('FOPEN_READ_WRITE',                    'r+b');
+define('FOPEN_WRITE_CREATE_DESTRUCTIVE',      'wb'); // truncates existing file data, use with care
+define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE', 'w+b'); // truncates existing file data, use with care
+define('FOPEN_WRITE_CREATE',                  'ab');
+define('FOPEN_READ_WRITE_CREATE',             'a+b');
+define('FOPEN_WRITE_CREATE_STRICT',           'xb');
+define('FOPEN_READ_WRITE_CREATE_STRICT',      'x+b');
 
 /*
 | ------------------------------------------------------------------------
-| CODE VERSION
+|  CODE VERSION
 | ------------------------------------------------------------------------
-| This is the version of the application you're running.
+| This is the version of the the application you're running.
 */
 
-define('APP_MAJOR_VER',	'2');
-define('APP_MINOR_VER',	'2');
-define('APP_PATCH_VER',	'1');
-define('APP_STATUS',	''); // 'dev', 'alpha', or 'beta'
+define('APP_MAJOR_VER', '3');
+define('APP_MINOR_VER', '0');
+define('APP_PATCH_VER', '0');
+define('APP_STATUS',    'dev'); // 'dev', 'alpha', or 'beta'
+
+/*
+| ------------------------------------------------------------------------
+|  ASSET DIRECTORIES
+| ------------------------------------------------------------------------
+| Directories for each type of asset:
+|   stylesheets, javascript, images, etc.
+*/
+
+define('FONT_DIR',   config_item('base_url').'assets/fonts/');
+define('IMAGE_DIR',  config_item('base_url').'assets/images/');
+define('SCRIPT_DIR', config_item('base_url').'assets/scripts/');
+define('STYLE_DIR',  config_item('base_url').'assets/styles/');
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
